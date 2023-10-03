@@ -86,7 +86,7 @@ async function userSocialLogin(req, res){
                 name: name,
                 email: email,
                 role: 'user',
-                firebaseid: firebaseId
+                firebaseId: firebaseId
             });
             await user.save();
 
