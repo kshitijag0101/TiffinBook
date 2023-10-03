@@ -57,6 +57,10 @@ export default function Register() {
         setShowLogin(true);
     };
 
+    const handleGoogleLogin = () => {};
+
+    const handleFacebookLogin = () => {};
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -182,8 +186,8 @@ export default function Register() {
                                 <div className="w-full flex justify-center items-center">
                                     <ul className="-mx-2 mb-6 flex justify-center">
                                         <li className="">
-                                            <a
-                                                href="/#"
+                                            <button
+                                                onClick={handleGoogleLogin}
                                                 className="flex h-11 lg:w-72 w-32 mx-2 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90 shadow-black"
                                             >
                                                 <div className=" items-center justify-center">
@@ -200,11 +204,11 @@ export default function Register() {
                                                         />
                                                     </svg>
                                                 </div>
-                                            </a>
+                                            </button>
                                         </li>
                                         <li className="">
-                                            <a
-                                                href="/#"
+                                            <button
+                                                onClick={handleFacebookLogin}
                                                 className="flex h-11 lg:w-72 w-32 mx-2 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                                             >
                                                 <div className=" items-center justify-center">
@@ -221,7 +225,7 @@ export default function Register() {
                                                         />
                                                     </svg>
                                                 </div>
-                                            </a>
+                                            </button>
                                         </li>
                                     </ul>
                                 </div>

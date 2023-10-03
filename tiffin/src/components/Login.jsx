@@ -39,6 +39,10 @@ export default function Login() {
         setShowSignUp(true);
     };
 
+    const handleGoogleLogin = () => {};
+
+    const handleFacebookLogin = () => {};
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -132,8 +136,8 @@ export default function Login() {
                                 </p>
                                 <ul className="-mx-2 mb-12 flex justify-center">
                                     <li className="w-72 px-2">
-                                        <a
-                                            href="/#"
+                                        <button
+                                            onClick={handleGoogleLogin}
                                             className="flex h-11 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90"
                                         >
                                             <svg
@@ -148,11 +152,11 @@ export default function Login() {
                                                     fill="white"
                                                 />
                                             </svg>
-                                        </a>
+                                        </button>
                                     </li>
                                     <li className="w-full px-2">
-                                        <a
-                                            href="/#"
+                                        <button
+                                            onClick={handleFacebookLogin}
                                             className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                                         >
                                             <svg
@@ -167,7 +171,7 @@ export default function Login() {
                                                     fill="white"
                                                 />
                                             </svg>
-                                        </a>
+                                        </button>
                                     </li>
                                 </ul>
                                 <p className="w-full text-black text-center">
