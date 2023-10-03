@@ -143,6 +143,7 @@ export default function Login() {
                                 <ul className="-mx-2 mb-12 flex justify-center">
                                     <li className="w-72 px-2">
                                         <button
+                                            type="submit"
                                             onClick={handleGoogleLogin}
                                             className="flex h-11 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90"
                                         >
@@ -162,6 +163,7 @@ export default function Login() {
                                     </li>
                                     <li className="w-full px-2">
                                         <button
+                                            type="submit"
                                             onClick={handleFacebookLogin}
                                             className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                                         >
