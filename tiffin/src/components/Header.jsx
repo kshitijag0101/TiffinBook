@@ -6,6 +6,8 @@ import { useRouter, usePathname } from "next/navigation";
 import useAuthContext from "../hooks/use-auth-hooks";
 import Login from "./Login";
 import Register from "./Register";
+import { auth } from "../config/firebase";
+import { signOut } from "firebase/auth";
 
 export default function Header() {
     const {
@@ -24,8 +26,9 @@ export default function Header() {
         console.log(pathUrl);
     }, [pathUrl]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
+    const handleLogout = async () => {
+        await signOut(auth);
+        localStorage.removeItem("cartId");
         localStorage.removeItem("userId");
         setIsLoggedIn(false);
         setTimeout(() => {

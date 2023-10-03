@@ -3,8 +3,6 @@ dotenv.config();
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import passport from 'passport';
-import { jwtStrategy, googleStrategy, facebookStrategy } from './controllers/auth.js';
 import { router as homeRouter } from './routes/home.js';
 import { router as userRouter } from './routes/user.js';
 import { router as adminRouter } from './routes/admin.js';
@@ -22,11 +20,6 @@ app.use(
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-passport.use(jwtStrategy);
-passport.use(googleStrategy);
-passport.use(facebookStrategy);
-app.use(passport.initialize());
 
 app.use('/', homeRouter);
 
