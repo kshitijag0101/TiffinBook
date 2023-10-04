@@ -94,7 +94,7 @@ export default function Adash() {
             </div>
             <div className="flex flex-col md:flex-row">
                 <AdminSidebar showUI={showUI} setShowUI={setShowUI} />
-                <div className="w-full mt-4 lg:w-[calc(100% - 280px)] md:pl-20">
+                <div className="w-full bg-gray-50 lg:w-[calc(100% - 280px)]">
                     {showUI === "orderlist" && <OrderList />}
                     {showUI === "addproduct" && (
                         <AddProduct setUpdateProductUI={setUpdateProductUI} />
