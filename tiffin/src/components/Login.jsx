@@ -5,10 +5,16 @@ import { useState, useRef, useEffect } from "react";
 import { HandleLogin } from "@/api/UserAPI";
 import useAuthContext from "@/hooks/use-auth-hooks";
 import { FaRegWindowClose } from "react-icons/fa";
+import { AiFillPhone } from "react-icons/ai";
+import { MdEmail } from "react-icons/md";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [phoneno, setphoneno] = useState(0);
+    const [otp, setOtp] = useState(0);
+    const [showLoginWithMobileNumber, setShowLoginWithMobileNumber] =
+        useState(false);
     const {
         isLoggedIn,
         setIsLoggedIn,
@@ -32,6 +38,14 @@ export default function Login() {
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
+    };
+
+    const handlePhoneNoChange = (e) => {
+        setphoneno(e.target.value);
+    };
+
+    const handleOTPChange = (e) => {
+        setOtp(e.target.value);
     };
 
     const handleShowRegister = () => {
@@ -85,60 +99,139 @@ export default function Login() {
                                     Login
                                 </p>
 
-                                <form className="w-full mt-10 mr-0 mb-10 ml-0 relative space-y-8 sm:max-w-full md:max-w-full xm:w-full ">
-                                    <div className="relative">
-                                        <p
-                                            className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
+                                <form className="w-full mt-6 mr-0 mb-6 ml-0 relative space-y-8 sm:max-w-full md:max-w-full xm:w-full ">
+                                    {showLoginWithMobileNumber === true ? (
+                                        <div>
+                                            <div className="relative">
+                                                <p
+                                                    className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
                     absolute"
-                                        >
-                                            Email
-                                        </p>
-                                        <input
-                                            placeholder="johndoe@gmail.com"
-                                            type="email"
-                                            onChange={handleEmailChange}
-                                            className="border placeholder-gray-400 focus:outline-none
-                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                >
+                                                    PhoneNo
+                                                </p>
+                                                <input
+                                                    type="number"
+                                                    onChange={
+                                                        handlePhoneNoChange
+                                                    }
+                                                    className="border placeholder-gray-400 focus:outline-none
+                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
                     border-gray-300 rounded-md"
-                                        />
-                                    </div>
+                                                />
+                                            </div>
 
-                                    <div className="relative">
-                                        <p
-                                            className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
+                                            <div className="relative">
+                                                <p
+                                                    className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
                     absolute"
-                                        >
-                                            Password
-                                        </p>
-                                        <input
-                                            placeholder="Password"
-                                            type="password"
-                                            onChange={handlePasswordChange}
-                                            className="border placeholder-gray-400 focus:outline-none
-                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                >
+                                                    OTP
+                                                </p>
+                                                <input
+                                                    placeholder="OTP"
+                                                    type="number"
+                                                    onChange={handleOTPChange}
+                                                    className="border placeholder-gray-400 focus:outline-none
+                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
                     border-gray-300 rounded-md"
-                                        />
-                                    </div>
-
-                                    <div className="relative">
-                                        <button
-                                            type="submit"
-                                            onClick={handleSubmit}
-                                            className="w-full inline-block px-5 py-4 text-xl font-medium text-center bg-or hover:bg-do
+                                                />
+                                            </div>
+                                            <div className="relative mt-4">
+                                                <button
+                                                    type="submit"
+                                                    onClick={handleSubmit}
+                                                    className="w-full inline-block px-5 py-4 text-xl font-medium text-center bg-or hover:bg-do
                     rounded-lg transition duration-200 text-white"
-                                        >
-                                            Submit
-                                        </button>
-                                    </div>
+                                                >
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <div className="relative">
+                                                <p
+                                                    className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
+                    absolute"
+                                                >
+                                                    Email
+                                                </p>
+                                                <input
+                                                    placeholder="johndoe@gmail.com"
+                                                    type="email"
+                                                    onChange={handleEmailChange}
+                                                    className="border placeholder-gray-400 focus:outline-none
+                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
+                    border-gray-300 rounded-md"
+                                                />
+                                            </div>
+
+                                            <div className="relative">
+                                                <p
+                                                    className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
+                    absolute"
+                                                >
+                                                    Password
+                                                </p>
+                                                <input
+                                                    placeholder="Password"
+                                                    type="password"
+                                                    onChange={
+                                                        handlePasswordChange
+                                                    }
+                                                    className="border placeholder-gray-400 focus:outline-none
+                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
+                    border-gray-300 rounded-md"
+                                                />
+                                            </div>
+                                            <div className="relative mt-4">
+                                                <button
+                                                    type="submit"
+                                                    onClick={handleSubmit}
+                                                    className="w-full inline-block px-5 py-4 text-xl font-medium text-center bg-or hover:bg-do
+                    rounded-lg transition duration-200 text-white"
+                                                >
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </form>
-                                <p className="w-full mb-6 text-base text-black text-center">
+                                <p className="w-full mb-4 text-base text-black text-center">
                                     Sign In With
                                 </p>
-                                <ul className="-mx-2 mb-12 flex justify-center">
-                                    <li className="w-72 px-2">
+                                <ul className="-mx-2 mb-6 flex justify-center">
+                                    {showLoginWithMobileNumber === true ? (
+                                        <li className="w-full px-2">
+                                            <button
+                                                onClick={() =>
+                                                    setShowLoginWithMobileNumber(
+                                                        false
+                                                    )
+                                                }
+                                                className="flex h-11 w-20 items-center justify-center rounded-md bg-black text-white hover:bg-opacity-90"
+                                            >
+                                                <MdEmail />
+                                            </button>
+                                        </li>
+                                    ) : (
+                                        <li className="w-full px-2">
+                                            <button
+                                                onClick={() =>
+                                                    setShowLoginWithMobileNumber(
+                                                        true
+                                                    )
+                                                }
+                                                className="flex h-11 w-20 items-center justify-center rounded-md bg-black text-white hover:bg-opacity-90"
+                                            >
+                                                <AiFillPhone />
+                                            </button>
+                                        </li>
+                                    )}
+                                    <li className="w-full px-2">
                                         <button
                                             onClick={handleGoogleLogin}
-                                            className="flex h-11 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90"
+                                            className="flex h-11 w-20 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90"
                                         >
                                             <svg
                                                 width="18"
@@ -157,7 +250,7 @@ export default function Login() {
                                     <li className="w-full px-2">
                                         <button
                                             onClick={handleFacebookLogin}
-                                            className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
+                                            className="flex h-11 w-20 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                                         >
                                             <svg
                                                 width="10"

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { HiClipboardDocumentList } from "react-icons/hi2";
 
 export default function AdminSidebar({ showUI, setShowUI }) {
     const [orders, setShowOrders] = useState(true);
@@ -63,10 +64,10 @@ export default function AdminSidebar({ showUI, setShowUI }) {
     };
 
     return (
-        <div className="sm:w-96 border-b-2 lg:border-r-2">
+        <div className="border-r-2 border-t-2 min-h-screen">
             <div className="mx-auto text-center">
                 <div
-                    className={`flex justify-between py-4 px-6 border text-xl hover:text-red-800 font-bold ${
+                    className={`flex justify-between py-4 px-6 text-xl hover:text-red-800 font-bold ${
                         orders === true ? "text-red-800" : "text-black"
                     }`}
                     onClick={handleShowOrderClick}
@@ -80,18 +81,19 @@ export default function AdminSidebar({ showUI, setShowUI }) {
                 </div>
                 {orders && (
                     <div
-                        className={`py-2 text-xl text-left px-12 hover:text-red-800 font-semibold ${
+                        className={`py-2 text-xl text-left px-12 hover:text-red-800 font-semibold flex gap-3 ${
                             showUI === "orderlist"
                                 ? "text-red-800"
                                 : "text-black"
                         }`}
                         onClick={handleOrderListClick}
                     >
+                        <HiClipboardDocumentList className="mt-1" />
                         Orders List
                     </div>
                 )}
                 <div
-                    className={`flex justify-between py-4 px-6 border text-xl hover:text-red-800 font-bold ${
+                    className={`flex justify-between py-4 px-6  text-xl hover:text-red-800 font-bold ${
                         addItems === true ? "text-red-800" : "text-black"
                     }`}
                     onClick={handleAddItemsClick}
@@ -158,7 +160,7 @@ export default function AdminSidebar({ showUI, setShowUI }) {
                     </div>
                 )}
                 <div
-                    className={`flex justify-between py-4 px-6 border text-xl hover:text-red-800 font-bold ${
+                    className={`flex justify-between py-4 px-6  text-xl hover:text-red-800 font-bold ${
                         modifyItems === true ? "text-red-800" : "text-black"
                     }`}
                     onClick={handleModifyItemsClick}

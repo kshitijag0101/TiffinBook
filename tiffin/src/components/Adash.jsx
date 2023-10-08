@@ -8,6 +8,7 @@ import {
     HandleGetCombos,
     HandleMenu,
 } from "@/api/UserAPI";
+import { RxDashboard } from "react-icons/rx";
 import { showToast } from "@/utils/showToast";
 import AddProduct from "./AddProduct";
 import AddMeal from "./AddMeal";
@@ -87,13 +88,24 @@ export default function Adash() {
     return (
         <div className="bg-white text-black">
             <ToastContainer />
-            <div className="flex h-20 w-72 items-center justify-center bg-white rounded-2xl">
-                <h1 className="pt-2 text-4xl font-medium text-center leading-snug font-serif text-gray-600">
-                    DashBoard
-                </h1>
-            </div>
+            <hr className="" />
+
             <div className="flex flex-col md:flex-row">
-                <AdminSidebar showUI={showUI} setShowUI={setShowUI} />
+                <div className="w-80">
+                    <h1 className="py-2 px-4 text-4xl border-r-2 leading-snug font-serif text-black flex gap-4">
+                        <RxDashboard className="text-red-800 mt-2" />
+                        <span className="font-serif text-sm">
+                            <span className="font-bold text-2xl text-red-800 italic">
+                                Admin
+                            </span>{" "}
+                            <br />
+                            <span className="pl-1">DashBoard</span>
+                        </span>
+                    </h1>
+
+                    <AdminSidebar showUI={showUI} setShowUI={setShowUI} />
+                </div>
+
                 <div className="w-full mt-4 lg:w-[calc(100% - 280px)] md:pl-20">
                     {showUI === "orderlist" && <OrderList />}
                     {showUI === "addproduct" && (
