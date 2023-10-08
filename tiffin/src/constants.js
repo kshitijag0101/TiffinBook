@@ -6,6 +6,8 @@ const BASE_ADMIN_API = API_DOMAIN + "/admin";
 export const USER_URL = {
     signup: BASE_USER_API + "/signup",
     login: BASE_USER_API + "/login",
+    googlelogin: BASE_USER_API + "/auth/google",
+    facebooklogin: BASE_USER_API + "/auth/facebook",
     checkpincode: API_DOMAIN + "/pincodes/check",
     menumeals: API_DOMAIN + "/menus",
     getdates: API_DOMAIN + "/weeks",

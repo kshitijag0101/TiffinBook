@@ -1,6 +1,8 @@
 import axios from "axios";
 import { showToast } from "../utils/showToast";
 import { USER_URL } from "../constants";
+import { auth, googleProvider, facebookProvider } from "../config/firebase";
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 export const checkPincode = async (pincode, router) => {
     showToast("Please wait", "info");
@@ -40,23 +42,28 @@ export const HandleRegister = async (
 ) => {
     showToast("Please wait", "info");
     try {
-        const response = await axios.post(USER_URL.signup, {
+        const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+
+        const requestObject = {
             name: `${name}`,
             email: `${email}`,
-            password: `${password}`,
             phone: `${contact}`,
-        });
-        if (response.status === 201) {
+            firebaseId: userCredentials.user.uid,
+            cartId: localStorage.getItem("cartId")
+        };
+        const response = await axios.post(USER_URL.signup, requestObject);
+        if (response.status === 201){
+            await sendEmailVerification(userCredentials.user);
+
             showToast("User created successfully", "success");
             setTimeout(() => {
                 setShowSignUp(false);
                 setShowLogin(true);
             }, 1000);
-        } else if (response.status === 400) {
-            showToast("Please fill all the details", "fail");
         }
+
     } catch (err) {
-        console.log(err);
+        console.log(typeof err.code, err.code);
         showToast("Cannot create user", "fail");
     }
 };
@@ -70,30 +77,84 @@ export const HandleLogin = async (
 ) => {
     showToast("Please wait", "info");
     try {
-        const response = await axios.post(USER_URL.login, {
-            email: `${email}`,
-            password: `${password}`,
-        });
-        if (response.status === 201) {
-            const token = response.data.token;
-            const userId = response.data.user._id;
-            localStorage.setItem("token", token);
-            localStorage.setItem("userId", userId);
+        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+
+        if (userCredentials){
+            localStorage.setItem("userId", userCredentials.user.uid);
             setIsLoggedIn(true);
             setShowLogin(false);
             setTimeout(() => {
                 router.push("/");
             }, 1000);
             showToast("Login successfull!", "success");
-        } else if (response.status === 400) {
-            showToast("Please fill all the details", "fail");
-        } else if (response.status === 401) {
-            showToast("Wrong credentials", "fail");
-        } else if (response.status === 404) {
-            showToast("User not found", "fail");
         }
+
     } catch (err) {
-        console.log(err);
+        console.log(typeof err.code, err.code);
+        showToast("Something went wrong!", "fail");
+    }
+};
+
+export const HandleGoogleLogin = async (
+    router,
+    setIsLoggedIn,
+    setShowLogin
+) => {
+    showToast("Please wait", "info");
+    try {
+        const userCredentials = await signInWithPopup(auth, googleProvider);
+
+        const requestObject = {
+            name: userCredentials.user.displayName,
+            email: userCredentials.user.email,
+            firebaseId: userCredentials.user.uid,
+            cartId: localStorage.getItem("cartId")
+        };
+        const response = await axios.post(USER_URL.googlelogin, requestObject);
+        if (response.status === 200 || response.status === 201){
+            localStorage.setItem("userId", userCredentials.user.uid);
+            setIsLoggedIn(true);
+            setShowLogin(false);
+            setTimeout(() => {
+                router.push("/");
+            }, 1000);
+            showToast("Login successfull!", "success");
+        }
+
+    } catch (err){
+        console.log(typeof err.code, err.code);
+        showToast("Something went wrong!", "fail");
+    }
+};
+
+export const HandleFacebookLogin = async (
+    router,
+    setIsLoggedIn,
+    setShowLogin
+) => {
+    showToast("Please wait", "info");
+    try {
+        const userCredentials = await signInWithPopup(auth, facebookProvider);
+
+        const requestObject = {
+            name: userCredentials.user.displayName,
+            email: userCredentials.user.email,
+            firebaseId: userCredentials.user.uid,
+            cartId: localStorage.getItem("cartId")
+        };
+        const response = await axios.post(USER_URL.facebooklogin, requestObject);
+        if (response.status === 200 || response.status === 201){
+            localStorage.setItem("userId", userCredentials.user.uid);
+            setIsLoggedIn(true);
+            setShowLogin(false);
+            setTimeout(() => {
+                router.push("/");
+            }, 1000);
+            showToast("Login successfull!", "success");
+        }
+
+    } catch (err){
+        console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
     }
 };
@@ -110,7 +171,10 @@ export const HandleGetUser = async (userId) => {
 };
 
 export const HandleEditUser = async (name, email, phone, deliveryAddress) => {
-    const token = localStorage.getItem("token");
+    let token = null;
+    if (auth.currentUser){
+        token = await auth.currentUser.getIdToken();
+    }
     try {
         const response = await axios.post(
             USER_URL.edituser,
@@ -204,8 +268,10 @@ export const HandleCart = async (
 
 export const HandleGetCart = async (userId, cartId) => {
     try {
-        const token = localStorage.getItem("token");
-        console.log(token);
+        let token = null;
+        if (auth.currentUser){
+            token = await auth.currentUser.getIdToken();
+        }
         let response;
         if (userId) {
             response = await axios.get(USER_URL.getcart, {

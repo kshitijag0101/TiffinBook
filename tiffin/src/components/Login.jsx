@@ -2,7 +2,7 @@
 import { ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { HandleLogin } from "@/api/UserAPI";
+import { HandleLogin, HandleGoogleLogin, HandleFacebookLogin } from "@/api/UserAPI";
 import useAuthContext from "@/hooks/use-auth-hooks";
 import { FaRegWindowClose } from "react-icons/fa";
 import { AiFillPhone } from "react-icons/ai";
@@ -53,9 +53,15 @@ export default function Login() {
         setShowSignUp(true);
     };
 
-    const handleGoogleLogin = () => {};
+    const handleGoogleLogin = async (e) => {
+        e.preventDefault();
+        await HandleGoogleLogin(router, setIsLoggedIn, setShowLogin);
+    };
 
-    const handleFacebookLogin = () => {};
+    const handleFacebookLogin = async (e) => {
+        e.preventDefault();
+        await HandleFacebookLogin(router, setIsLoggedIn, setShowLogin);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -230,6 +236,7 @@ export default function Login() {
                                     )}
                                     <li className="w-full px-2">
                                         <button
+                                            type="submit"
                                             onClick={handleGoogleLogin}
                                             className="flex h-11 w-20 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90"
                                         >
@@ -249,6 +256,7 @@ export default function Login() {
                                     </li>
                                     <li className="w-full px-2">
                                         <button
+                                            type="submit"
                                             onClick={handleFacebookLogin}
                                             className="flex h-11 w-20 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
                                         >

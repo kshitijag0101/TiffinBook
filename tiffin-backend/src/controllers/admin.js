@@ -150,11 +150,12 @@ async function exportOrders(req, res){
 
 async function fetchUsers(req, res){
     try {
-        const role = req.body.role;
+        const users = await User.find({ role: 'user' });
+        const orderViewers = await User.find({ role: 'order-viewer' });
+        const menuEditors = await User.find({ role: 'menu-editor' });
+        const admins = await User.find({ role: 'admin' });
 
-        const users = await User.find({ role: role });
-
-        return res.status(200).json({ users });
+        return res.status(200).json({ users, orderViewers, menuEditors, admins });
     }
     catch (err){
         console.log(err);

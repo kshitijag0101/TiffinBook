@@ -2,25 +2,13 @@ import mongoose from "mongoose";
 import User from "../models/user.js";
 import Order from "../models/order.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import Cart from "../models/cart.js";
-import nodemailer from "nodemailer";
-import crypto from "crypto";
-
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-    },
-});
 
 async function getUser(req, res) {
     try {
         const userId = req.body.userId;
 
-        const user = await User.findById(userId);
+        const user = await User.findOne({ firebaseId: userId });
         if (!user) {
             return res.status(404).json({ error: `user not found` });
         }
@@ -30,42 +18,7 @@ async function getUser(req, res) {
     }
 }
 
-async function userLogin(req, res) {
-    try {
-        if (!req.body.email) {
-            return res.status(400).json({ error: `email missing` });
-        }
-        if (!req.body.password) {
-            return res.status(400).json({ error: `password missing` });
-        }
-
-        const user = await User.findOne({ email: req.body.email });
-        if (!user) {
-            return res.status(404).json({ error: `user not found` });
-        }
-
-        const result = bcrypt.compare(req.body.password, user.password);
-
-        if (result) {
-            const payload = {
-                email: user.email,
-                name: user.name,
-                _id: user._id,
-            };
-            const token = jwt.sign(payload, process.env.JWT_SECRET, {
-                expiresIn: "1d",
-            });
-
-            return res.status(201).json({ user, token });
-        } else {
-            return res.status(401).json({ message: `wrong user credentials` });
-        }
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-async function createCartUtil(userId, cartId) {
+async function createCartUtil(userId, cartId, firebaseId) {
     try {
         if (!userId) {
             const cart = new Cart({
@@ -80,6 +33,7 @@ async function createCartUtil(userId, cartId) {
             const cart = new Cart({
                 isGuest: false,
                 userId: new mongoose.Types.ObjectId(userId),
+                firebaseId: firebaseId
             });
             await cart.save();
 
@@ -90,6 +44,7 @@ async function createCartUtil(userId, cartId) {
 
         cart.isGuest = false;
         cart.userId = new mongoose.Types.ObjectId(userId);
+        cart.firebaseId = firebaseId;
         await cart.save();
 
         return cart._id;
@@ -100,101 +55,49 @@ async function createCartUtil(userId, cartId) {
 
 async function userSignup(req, res) {
     try {
-        if (!req.body.email) {
-            return res.status(400).json({ error: `email missing` });
-        }
-        if (!req.body.password) {
-            return res.status(400).json({ error: `password missing` });
-        }
-        if (!req.body.name) {
-            return res.status(400).json({ error: `name missing` });
-        }
+        const { name, email, phone, firebaseId, cartId } = req.body;
 
-        const { email, name, phone } = req.body;
-        const cartId = req.body.cartId;
-        const password = await bcrypt.hash(
-            req.body.password,
-            parseInt(process.env.SALT_ROUNDS)
-        );
-
-        crypto.randomBytes(32, async (err, buffer) => {
-            if (err) {
-                console.log(err);
-            }
-
-            const token = buffer.toString("hex");
-
-            const user = new User({
-                name: name,
-                email: email,
-                password: password,
-                phone: phone,
-                verificationToken: token,
-                isAdmin: false,
-            });
-            await user.save();
-
-            await createCartUtil(user._id, cartId);
-
-            await generateVerificationMail(user._id, email, token);
-
-            return res.status(201).json({ user });
+        const user = new User({
+            name: name,
+            email: email,
+            phone: phone,
+            role: 'user',
+            firebaseId: firebaseId
         });
-    } catch (err) {
-        console.log(err);
+        await user.save();
+
+        await createCartUtil(user._id, cartId, firebaseId);
+
+        return res.status(201).json({ user });
     }
-}
-
-async function generateVerificationMail(userId, email, token) {
-    try {
-        await transporter.sendMail({
-            to: email,
-            from: process.env.EMAIL,
-            subject: `verify email to start ordering`,
-            html: `<a href="http://localhost:5000/user/${userId}/verify/${token}">Click Here</a>`,
-        });
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-async function verifyUser(req, res) {
-    try {
-        const userId = req.params.userId;
-        const token = req.params.token;
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: `user not found` });
-        }
-
-        if (user.verificationToken === token) {
-            user.verificationToken = null;
-            await user.save();
-
-            return res.status(200).json({ success: true, user: user });
-        }
-        return res.status(200).json({ success: false });
-    } catch (err) {
+    catch (err) {
         console.log(err);
     }
 }
 
 async function userSocialLogin(req, res){
     try {
-        const user = await User.findById(req.user._id);
-        if (user){
-            const payload = {
-                email: user.email,
-                name: user.name,
-                _id: user._id,
-            };
-            const token = jwt.sign(payload, process.env.JWT_SECRET, {
-                expiresIn: "1d",
+        const { name, email, firebaseId, cartId } = req.body;
+
+        let user = await User.findOne({ firebaseId: firebaseId });
+
+        if (!user){
+            user = new User({
+                name: name,
+                email: email,
+                role: 'user',
+                firebaseId: firebaseId
             });
-            return res.status(201).json({ user, token });
+            await user.save();
+
+            console.log(user);
+
+            await createCartUtil(user._id, cartId, firebaseId);
+
+            return res.status(201).json({ user });
         }
-        return res.status(404).json({ error: `user not found` });
+
+        return res.status(200).json({ user });
     }
     catch (err){
         console.log(err);
@@ -233,7 +136,7 @@ async function editUser(req, res) {
 
 async function createCart(req, res) {
     try {
-        const cartId = await createCartUtil(null, null);
+        const cartId = await createCartUtil(null, null, null);
         return res.status(200).json({
             message: `cart created `,
             cartId: cartId,
@@ -288,7 +191,7 @@ async function addToCart(req, res) {
         if (!userId) {
             cart = await Cart.findById(cartId);
         } else {
-            cart = await Cart.findOne({ userId: userId });
+            cart = await Cart.findOne({ firebaseId: userId });
         }
 
         let startDate = new Date(meals[0].deliveryDate);
@@ -328,7 +231,7 @@ async function removeFromCart(req, res) {
         if (!userId) {
             cart = await Cart.findById(cartId);
         } else {
-            cart = await Cart.findOne({ userId: userId });
+            cart = await Cart.findOne({ firebaseId: userId });
         }
 
         let removedMealPlan = null;
@@ -474,9 +377,7 @@ async function modifyMealPlan(req, res){
 
 export {
     getUser,
-    userLogin,
     userSignup,
-    verifyUser,
     userSocialLogin,
     editUser,
     getCartByUser,

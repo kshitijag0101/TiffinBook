@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import * as user from '../controllers/user.js'
-import { authenticate, googleScopeSetup, googleAuthenticate, facebookScopeSetup, facebookAuthenticate } from '../controllers/auth.js';
-import passport from 'passport';
+import { authenticate } from '../controllers/auth.js';
 
 const router = Router();
 
@@ -9,17 +8,9 @@ router.post('/', user.getUser);
 
 router.post('/signup', user.userSignup);
 
-router.post('/login', user.userLogin);
+router.post("/auth/google", user.userSocialLogin);
 
-router.get("/auth/google", googleScopeSetup);
-
-router.get("/auth/google/account", googleAuthenticate, user.userSocialLogin);
-
-router.get("/auth/facebook", facebookScopeSetup);
- 
-router.get("/auth/facebook/account", facebookAuthenticate, user.userSocialLogin);
-
-router.get('/:userId/verify/:token', user.verifyUser);
+router.post("/auth/facebook", user.userSocialLogin);
 
 router.post('/edit', authenticate, user.editUser);
 

@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { auth } from "../config/firebase";
 const AuthContext = createContext();
 
 function Provider({ children }) {
@@ -6,7 +7,8 @@ function Provider({ children }) {
     const [showLogin, setShowLogin] = useState(false);
     const [showSignUp, setShowSignUp] = useState(false);
     useEffect(() => {
-        if (localStorage.getItem("userId") && localStorage.getItem("token")) {
+        const user = auth.currentUser;
+        if (user) {
             setIsLoggedIn(true);
         } else {
             setIsLoggedIn(false);

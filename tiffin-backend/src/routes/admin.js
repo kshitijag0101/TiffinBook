@@ -3,7 +3,6 @@ import * as admin from '../controllers/admin.js';
 import * as product from '../controllers/product.js';
 import * as meal from "../controllers/meal.js";
 import * as pincode from "../controllers/pincode.js";
-import { adminAuthenticate } from '../controllers/auth.js';
 
 const router = Router();
 
@@ -17,9 +16,9 @@ router.post("/pinocdes/enable", pincode.enablePincode);
 
 router.post("/pincodes/disable", pincode.disablePincode);
 
-router.post("/orders", adminAuthenticate, admin.getOrders);
+router.post("/orders", admin.getOrders);
 
-router.post("/orders/export", adminAuthenticate, admin.exportOrders);
+router.post("/orders/export", admin.exportOrders);
 
 router.get("/products", product.getProducts);
 
@@ -57,7 +56,7 @@ router.post("/food-options/add", meal.addFoodOption);
 
 router.post("/food-options/remove", meal.removeFoodOption);
 
-router.post("/users", admin.fetchUsers);
+router.get("/users", admin.fetchUsers);
 
 router.post("/users/grant", admin.grantRole);
 
