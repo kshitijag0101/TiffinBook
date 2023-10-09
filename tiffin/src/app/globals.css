@@ -44,3 +44,31 @@ body {
     height: 25px !important;
   }
 }
+/* Base styles */
+.PhoneInputInput {
+  width: 100%;
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1.5rem;
+  padding-left: 1rem;
+  margin-top: 1rem;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  font-size: 1rem;
+  display: block;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  outline: none;
+}
+
+/* Placeholder styles */
+.PhoneInputInput::placeholder {
+  color: #a0aec0;
+}
+
+/* Focus styles */
+.PhoneInputInput:focus {
+  border-color: #000;
+}
