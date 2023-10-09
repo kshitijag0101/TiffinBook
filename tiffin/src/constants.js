@@ -36,4 +36,7 @@ export const USER_URL = {
     deletemealcount: BASE_ADMIN_API + "/meal-counts/remove",
     deletefoodoption: BASE_ADMIN_API + "/food-options/remove",
     deletemenu: BASE_ADMIN_API + "/menus/remove",
+    getusers: BASE_ADMIN_API + "/users",
+    grantrole: BASE_ADMIN_API + "/users/grant",
+    revokerole: BASE_ADMIN_API + "/users/revoke",
 };

@@ -2,7 +2,14 @@ import axios from "axios";
 import { showToast } from "../utils/showToast";
 import { USER_URL } from "../constants";
 import { auth, googleProvider, facebookProvider } from "../config/firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    RecaptchaVerifier,
+    signInWithPhoneNumber,
+} from "firebase/auth";
 
 export const checkPincode = async (pincode, router) => {
     showToast("Please wait", "info");
@@ -42,17 +49,21 @@ export const HandleRegister = async (
 ) => {
     showToast("Please wait", "info");
     try {
-        const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredentials = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
         const requestObject = {
             name: `${name}`,
             email: `${email}`,
             phone: `${contact}`,
             firebaseId: userCredentials.user.uid,
-            cartId: localStorage.getItem("cartId")
+            cartId: localStorage.getItem("cartId"),
         };
         const response = await axios.post(USER_URL.signup, requestObject);
-        if (response.status === 201){
+        if (response.status === 201) {
             await sendEmailVerification(userCredentials.user);
 
             showToast("User created successfully", "success");
@@ -61,7 +72,6 @@ export const HandleRegister = async (
                 setShowLogin(true);
             }, 1000);
         }
-
     } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Cannot create user", "fail");
@@ -77,9 +87,13 @@ export const HandleLogin = async (
 ) => {
     showToast("Please wait", "info");
     try {
-        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+        const userCredentials = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
-        if (userCredentials){
+        if (userCredentials) {
             localStorage.setItem("userId", userCredentials.user.uid);
             setIsLoggedIn(true);
             setShowLogin(false);
@@ -88,7 +102,6 @@ export const HandleLogin = async (
             }, 1000);
             showToast("Login successfull!", "success");
         }
-
     } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
@@ -108,10 +121,10 @@ export const HandleGoogleLogin = async (
             name: userCredentials.user.displayName,
             email: userCredentials.user.email,
             firebaseId: userCredentials.user.uid,
-            cartId: localStorage.getItem("cartId")
+            cartId: localStorage.getItem("cartId"),
         };
         const response = await axios.post(USER_URL.googlelogin, requestObject);
-        if (response.status === 200 || response.status === 201){
+        if (response.status === 200 || response.status === 201) {
             localStorage.setItem("userId", userCredentials.user.uid);
             setIsLoggedIn(true);
             setShowLogin(false);
@@ -120,8 +133,7 @@ export const HandleGoogleLogin = async (
             }, 1000);
             showToast("Login successfull!", "success");
         }
-
-    } catch (err){
+    } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
     }
@@ -140,10 +152,13 @@ export const HandleFacebookLogin = async (
             name: userCredentials.user.displayName,
             email: userCredentials.user.email,
             firebaseId: userCredentials.user.uid,
-            cartId: localStorage.getItem("cartId")
+            cartId: localStorage.getItem("cartId"),
         };
-        const response = await axios.post(USER_URL.facebooklogin, requestObject);
-        if (response.status === 200 || response.status === 201){
+        const response = await axios.post(
+            USER_URL.facebooklogin,
+            requestObject
+        );
+        if (response.status === 200 || response.status === 201) {
             localStorage.setItem("userId", userCredentials.user.uid);
             setIsLoggedIn(true);
             setShowLogin(false);
@@ -152,45 +167,47 @@ export const HandleFacebookLogin = async (
             }, 1000);
             showToast("Login successfull!", "success");
         }
-
-    } catch (err){
+    } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
     }
 };
 
-async function setupRecaptcha(phoneno){
+async function setupRecaptcha(phoneno) {
     try {
-        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-verifier', {});
+        const recaptchaVerifier = new RecaptchaVerifier(
+            auth,
+            "recaptcha-verifier",
+            {}
+        );
         await recaptchaVerifier.render();
-        const response = await signInWithPhoneNumber(auth, phoneno, recaptchaVerifier);
+        const response = await signInWithPhoneNumber(
+            auth,
+            phoneno,
+            recaptchaVerifier
+        );
         return response;
-    } catch (err){
+    } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
     }
 }
 
-export const HandleSendOtp = async (
-    phoneno,
-    setConfirmObj,
-    setOtpFlag
-) => {
+export const HandleSendOtp = async (phoneno, setConfirmObj, setOtpFlag) => {
     showToast("Please verify captcha", "info");
     try {
         const response = await setupRecaptcha(phoneno);
 
-        if (response){
+        if (response) {
             setConfirmObj(response);
             setOtpFlag(true);
             showToast("Otp sent!", "success");
         }
-
-    } catch (err){
+    } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
     }
-}
+};
 
 export const HandleSubmitOtp = async (
     confirmObj,
@@ -206,10 +223,10 @@ export const HandleSubmitOtp = async (
         const requestObject = {
             phone: userCredentials.user.phoneNumber,
             firebaseId: userCredentials.user.uid,
-            cartId: localStorage.getItem("cartId")
+            cartId: localStorage.getItem("cartId"),
         };
         const response = await axios.post(USER_URL.phonelogin, requestObject);
-        if (response.status === 200 || response.status === 201){
+        if (response.status === 200 || response.status === 201) {
             localStorage.setItem("userId", userCredentials.user.uid);
             setIsLoggedIn(true);
             setShowLogin(false);
@@ -218,8 +235,7 @@ export const HandleSubmitOtp = async (
             }, 1000);
             showToast("Login successfull!", "success");
         }
-
-    } catch (err){
+    } catch (err) {
         console.log(typeof err.code, err.code);
         showToast("Something went wrong!", "fail");
     }
@@ -238,7 +254,7 @@ export const HandleGetUser = async (userId) => {
 
 export const HandleEditUser = async (name, email, phone, deliveryAddress) => {
     let token = null;
-    if (auth.currentUser){
+    if (auth.currentUser) {
         token = await auth.currentUser.getIdToken();
     }
     try {
@@ -335,7 +351,7 @@ export const HandleCart = async (
 export const HandleGetCart = async (userId, cartId) => {
     try {
         let token = null;
-        if (auth.currentUser){
+        if (auth.currentUser) {
             token = await auth.currentUser.getIdToken();
         }
         let response;
@@ -677,5 +693,62 @@ export const HandleDeleteMenu = async (menuId, setShowUI, setUpdateMenuUI) => {
         }
     } catch (err) {
         showToast("Menu cannot be deleted", "fail");
+    }
+};
+
+export const HandleGetUsers = async () => {
+    try {
+        const response = await axios.get(USER_URL.getusers, {});
+        return response.data;
+    } catch (err) {
+        showToast("Server Error!", "fail");
+    }
+};
+
+export const HandleGrantRole = async (
+    userId,
+    role,
+    setShowUI,
+    setUpdateUserInfo
+) => {
+    try {
+        const response = await axios.post(USER_URL.grantrole, {
+            userId: userId,
+            role: role,
+        });
+        if (response.status === 200) {
+            showToast("Role Updated", "success");
+            setShowUI("usersinfo");
+            setUpdateUserInfo(true);
+            setTimeout(() => {
+                setUpdateUserInfo(false);
+            }, 1000);
+        }
+        return response.data;
+    } catch (err) {
+        showToast("Server Error!", "fail");
+    }
+};
+
+export const HandleRevokeRole = async (
+    userId,
+    setShowUI,
+    setUpdateUserInfo
+) => {
+    try {
+        const response = await axios.post(USER_URL.revokerole, {
+            userId: userId,
+        });
+        if (response.status === 200) {
+            showToast("Role Updated", "success");
+            setShowUI("adminsinfo");
+            setUpdateUserInfo(true);
+            setTimeout(() => {
+                setUpdateUserInfo(false);
+            }, 1000);
+        }
+        return response.data;
+    } catch (err) {
+        showToast("Server Error!", "fail");
     }
 };

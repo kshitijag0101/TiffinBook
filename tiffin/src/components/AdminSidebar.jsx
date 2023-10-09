@@ -3,17 +3,19 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { HiClipboardDocumentList } from "react-icons/hi2";
 import { BsCardChecklist } from "react-icons/bs";
 import { TbLayoutGridAdd } from "react-icons/tb";
-import { FaProductHunt } from "react-icons/fa";
+import { FaProductHunt, FaUserAlt } from "react-icons/fa";
 import { GiMeal } from "react-icons/gi";
-import { BiSolidFoodMenu } from "react-icons/bi";
+import { BiSolidFoodMenu, BiSolidUserDetail } from "react-icons/bi";
 import { MdFastfood } from "react-icons/md";
 import { FaCalendarDays } from "react-icons/fa6";
 import { AiFillEdit } from "react-icons/ai";
+import { RiAdminFill } from "react-icons/ri";
 
 export default function AdminSidebar({ showUI, setShowUI }) {
     const [orders, setShowOrders] = useState(true);
     const [addItems, setAddItems] = useState(false);
     const [modifyItems, setModifyItems] = useState(false);
+    const [showUsers, setShowUsers] = useState(false);
 
     const handleOrderListClick = () => {
         setShowUI("orderlist");
@@ -59,6 +61,14 @@ export default function AdminSidebar({ showUI, setShowUI }) {
         setShowUI("showmenu");
     };
 
+    const handleShowUsersClick = () => {
+        setShowUI("usersinfo");
+    };
+
+    const handleShowAdminClick = () => {
+        setShowUI("adminsinfo");
+    };
+
     const handleShowOrderClick = () => {
         orders === true ? setShowOrders(false) : setShowOrders(true);
     };
@@ -69,6 +79,10 @@ export default function AdminSidebar({ showUI, setShowUI }) {
 
     const handleModifyItemsClick = () => {
         modifyItems === true ? setModifyItems(false) : setModifyItems(true);
+    };
+
+    const handleUsersClick = () => {
+        showUsers === true ? setShowUsers(false) : setShowUsers(true);
     };
 
     return (
@@ -253,6 +267,48 @@ export default function AdminSidebar({ showUI, setShowUI }) {
                         >
                             <FaCalendarDays className="mt-1" />
                             Meal Counts
+                        </div>
+                    </div>
+                )}
+                <div
+                    className={`flex gap-4 py-4 px-6  text-xl hover:text-red-800 font-bold ${
+                        showUsers === true ? "text-red-800" : "text-black"
+                    }`}
+                    onClick={handleUsersClick}
+                >
+                    <FaUserAlt className="mt-1" />
+                    <div className="flex justify-between">
+                        Customers{" "}
+                        {showUsers === true ? (
+                            <IoIosArrowUp className="mt-1 ml-11" />
+                        ) : (
+                            <IoIosArrowDown className="mt-1 ml-11" />
+                        )}
+                    </div>
+                </div>
+                {showUsers && (
+                    <div>
+                        <div
+                            className={`py-2 text-xl text-left px-12 hover:text-red-800 font-semibold flex gap-4 ${
+                                showUI === "usersinfo"
+                                    ? "text-red-800"
+                                    : "text-black"
+                            }`}
+                            onClick={handleShowUsersClick}
+                        >
+                            <BiSolidUserDetail className="mt-1" />
+                            Users Info
+                        </div>
+                        <div
+                            className={`py-2 text-xl text-left px-12 hover:text-red-800 font-semibold flex gap-4 ${
+                                showUI === "adminsinfo"
+                                    ? "text-red-800"
+                                    : "text-black"
+                            }`}
+                            onClick={handleShowAdminClick}
+                        >
+                            <RiAdminFill className="mt-1" />
+                            Admins Info
                         </div>
                     </div>
                 )}

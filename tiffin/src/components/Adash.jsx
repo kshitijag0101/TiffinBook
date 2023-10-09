@@ -7,6 +7,7 @@ import {
     HandleGetFoodOptions,
     HandleGetCombos,
     HandleMenu,
+    HandleGetUsers,
 } from "@/api/UserAPI";
 import { RxDashboard } from "react-icons/rx";
 import { showToast } from "@/utils/showToast";
@@ -22,6 +23,8 @@ import ShowMeal from "./ShowMeals";
 import ShowCombo from "./ShowCombo";
 import ShowMealCount from "./ShowMealCount";
 import ShowMenu from "./ShowMenu";
+import ShowUsers from "./ShowUsers";
+import ShowAdmin from "./ShowAdmins";
 
 export default function Adash() {
     const [showUI, setShowUI] = useState("orderlist");
@@ -31,11 +34,13 @@ export default function Adash() {
     const [foodOptions, setFoodOptions] = useState([]);
     const [combos, setCombos] = useState([]);
     const [menus, setMenus] = useState([]);
+    const [usersDetails, setUsersDetails] = useState({});
     const [updateProductUI, setUpdateProductUI] = useState(false);
     const [updateMealUI, setUpdateMealUI] = useState(false);
     const [updateMenuUI, setUpdateMenuUI] = useState(false);
     const [updateComboUI, setUpdateComboUI] = useState(false);
     const [updateMealCountUI, setUpdateMealCountUI] = useState(false);
+    const [updateUsersInfo, setUpdateUserInfo] = useState(false);
 
     useEffect(() => {
         const fetchMenu = async () => {
@@ -84,6 +89,15 @@ export default function Adash() {
         };
         fetchfoodOptions();
     }, [updateMealCountUI]);
+
+    useEffect(() => {
+        const fetchUsersInfo = async () => {
+            const response = await HandleGetUsers();
+            console.log(response);
+            setUsersDetails(response);
+        };
+        fetchUsersInfo();
+    }, [updateUsersInfo]);
 
     return (
         <div className="bg-white text-black">
@@ -171,6 +185,20 @@ export default function Adash() {
                             menus={menus}
                             setShowUI={setShowUI}
                             setUpdateMealCountUI={setUpdateMealCountUI}
+                        />
+                    )}
+                    {showUI === "usersinfo" && (
+                        <ShowUsers
+                            usersDetails={usersDetails}
+                            setShowUI={setShowUI}
+                            setUpdateUserInfo={setUpdateUserInfo}
+                        />
+                    )}
+                    {showUI === "adminsinfo" && (
+                        <ShowAdmin
+                            usersDetails={usersDetails}
+                            setShowUI={setShowUI}
+                            setUpdateUserInfo={setUpdateUserInfo}
                         />
                     )}
                 </div>
