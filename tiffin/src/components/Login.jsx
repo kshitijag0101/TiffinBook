@@ -2,19 +2,22 @@
 import { ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { HandleLogin, HandleGoogleLogin, HandleFacebookLogin } from "@/api/UserAPI";
+import { HandleLogin, HandleGoogleLogin, HandleFacebookLogin, HandleSendOtp, HandleSubmitOtp } from "@/api/UserAPI";
 import useAuthContext from "@/hooks/use-auth-hooks";
 import { FaRegWindowClose } from "react-icons/fa";
 import { AiFillPhone } from "react-icons/ai";
 import { MdEmail } from "react-icons/md";
+import 'react-phone-number-input/style.css';
+import PhoneInput from 'react-phone-number-input';
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phoneno, setphoneno] = useState(0);
     const [otp, setOtp] = useState(0);
-    const [showLoginWithMobileNumber, setShowLoginWithMobileNumber] =
-        useState(false);
+    const [showLoginWithMobileNumber, setShowLoginWithMobileNumber] = useState(false);
+    const [otpFlag, setOtpFlag] = useState(false);
+    const [confirmObj, setConfirmObj] = useState("");
     const {
         isLoggedIn,
         setIsLoggedIn,
@@ -40,10 +43,6 @@ export default function Login() {
         setPassword(e.target.value);
     };
 
-    const handlePhoneNoChange = (e) => {
-        setphoneno(e.target.value);
-    };
-
     const handleOTPChange = (e) => {
         setOtp(e.target.value);
     };
@@ -61,6 +60,16 @@ export default function Login() {
     const handleFacebookLogin = async (e) => {
         e.preventDefault();
         await HandleFacebookLogin(router, setIsLoggedIn, setShowLogin);
+    };
+
+    const handleSendOtp = async (e) => {
+        e.preventDefault();
+        await HandleSendOtp(phoneno, setConfirmObj, setOtpFlag);
+    };
+
+    const handleSubmitOtp = async (e) => {
+        e.preventDefault();
+        await HandleSubmitOtp(confirmObj, otp, router, setIsLoggedIn, setShowLogin);
     };
 
     useEffect(() => {
@@ -107,52 +116,60 @@ export default function Login() {
 
                                 <form className="w-full mt-6 mr-0 mb-6 ml-0 relative space-y-8 sm:max-w-full md:max-w-full xm:w-full ">
                                     {showLoginWithMobileNumber === true ? (
-                                        <div>
-                                            <div className="relative">
-                                                <p
-                                                    className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
-                    absolute"
-                                                >
-                                                    PhoneNo
-                                                </p>
-                                                <input
-                                                    type="number"
-                                                    onChange={
-                                                        handlePhoneNoChange
-                                                    }
-                                                    className="border placeholder-gray-400 focus:outline-none
-                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
-                    border-gray-300 rounded-md"
-                                                />
-                                            </div>
+                                        otpFlag === false ? (
+                                            <div>
+                                                <div className="relative">
 
-                                            <div className="relative">
-                                                <p
-                                                    className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
-                    absolute"
-                                                >
-                                                    OTP
-                                                </p>
-                                                <input
-                                                    placeholder="OTP"
-                                                    type="number"
-                                                    onChange={handleOTPChange}
-                                                    className="border placeholder-gray-400 focus:outline-none
-                    focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
-                    border-gray-300 rounded-md"
-                                                />
+                                                    <PhoneInput
+                                                        defaultCountry="IN"
+                                                        value={phoneno}
+                                                        onChange={setphoneno}
+                                                        placeholder="Enter you Phone number"
+                                                    />
+                                                    <div id="recaptcha-verifier">_</div>
+
+                                                </div>
+                                                <div className="relative mt-4">
+                                                    <button
+                                                        type="submit"
+                                                        onClick={handleSendOtp}
+                                                        className="w-full inline-block px-5 py-4 text-xl font-medium text-center bg-or hover:bg-do
+                        rounded-lg transition duration-200 text-white"
+                                                    >
+                                                        Send Otp
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div className="relative mt-4">
-                                                <button
-                                                    type="submit"
-                                                    onClick={handleSubmit}
-                                                    className="w-full inline-block px-5 py-4 text-xl font-medium text-center bg-or hover:bg-do
-                    rounded-lg transition duration-200 text-white"
-                                                >
-                                                    Submit
-                                                </button>
+                                        ) : (
+                                            <div>
+                                                <div className="relative">
+                                                    <p
+                                                        className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600
+                        absolute"
+                                                    >
+                                                        OTP
+                                                    </p>
+                                                    <input
+                                                        placeholder="OTP"
+                                                        type="number"
+                                                        onChange={handleOTPChange}
+                                                        className="border placeholder-gray-400 focus:outline-none
+                        focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-4 mr-0 mb-0 ml-0 text-base block bg-white
+                        border-gray-300 rounded-md"
+                                                    />
+                                                </div>
+                                                <div className="relative mt-4">
+                                                    <button
+                                                        type="submit"
+                                                        onClick={handleSubmitOtp}
+                                                        className="w-full inline-block px-5 py-4 text-xl font-medium text-center bg-or hover:bg-do
+                        rounded-lg transition duration-200 text-white"
+                                                    >
+                                                        Submit Otp
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        )
                                     ) : (
                                         <div>
                                             <div className="relative">

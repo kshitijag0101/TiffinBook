@@ -12,6 +12,8 @@ router.post("/auth/google", user.userSocialLogin);
 
 router.post("/auth/facebook", user.userSocialLogin);
 
+router.post("/auth/phone", user.userPhoneLogin);
+
 router.post('/edit', authenticate, user.editUser);
 
 router.get('/check', authenticate, (req, res)=>{

@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import User from "../models/user.js";
 import Order from "../models/order.js";
-import bcrypt from "bcrypt";
 import Cart from "../models/cart.js";
 
 async function getUser(req, res) {
@@ -104,31 +103,37 @@ async function userSocialLogin(req, res){
     }
 }
 
-async function editUser(req, res) {
+async function userPhoneLogin(req, res){
     try {
-        console.log(req.user._id);
-        let user = await User.findById(req.user._id);
-        if (!user) {
-            return res.status(404).json({ message: `user not found` });
+        const { phone, firebaseId, cartId } = req.body;
+
+        let user = await User.findOne({ firebaseId: firebaseId });
+
+        if (!user){
+            user = new User({
+                phone: phone,
+                role: 'user',
+                firebaseId: firebaseId
+            });
+            await user.save();
+
+            console.log(user);
+
+            await createCartUtil(user._id, cartId, firebaseId);
+
+            return res.status(201).json({ user });
         }
 
-        const { name, password, email, phone, deliveryAddress } = req.body;
-        if (name) user.name = name;
-        if (password)
-            user.password = await bcrypt.hash(
-                password,
-                parseInt(process.env.SALT_ROUNDS)
-            );
-        if (email) user.email = email;
-        if (phone) user.phone = phone;
-        if (deliveryAddress) user.deliveryAddress = deliveryAddress;
+        return res.status(200).json({ user });
+    }
+    catch (err){
+        console.log(err);
+    }
+}
 
-        await user.save();
-
-        return res.status(200).json({
-            message: `user details updated`,
-            user: user,
-        });
+async function editUser(req, res) {
+    try {
+        return res.status(200).json({ message: `route under development` });
     } catch (err) {
         console.log(err);
     }
@@ -379,6 +384,7 @@ export {
     getUser,
     userSignup,
     userSocialLogin,
+    userPhoneLogin,
     editUser,
     getCartByUser,
     getCartById,

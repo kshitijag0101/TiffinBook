@@ -2,7 +2,7 @@ import axios from "axios";
 import { showToast } from "../utils/showToast";
 import { USER_URL } from "../constants";
 import { auth, googleProvider, facebookProvider } from "../config/firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 export const checkPincode = async (pincode, router) => {
     showToast("Please wait", "info");
@@ -143,6 +143,72 @@ export const HandleFacebookLogin = async (
             cartId: localStorage.getItem("cartId")
         };
         const response = await axios.post(USER_URL.facebooklogin, requestObject);
+        if (response.status === 200 || response.status === 201){
+            localStorage.setItem("userId", userCredentials.user.uid);
+            setIsLoggedIn(true);
+            setShowLogin(false);
+            setTimeout(() => {
+                router.push("/");
+            }, 1000);
+            showToast("Login successfull!", "success");
+        }
+
+    } catch (err){
+        console.log(typeof err.code, err.code);
+        showToast("Something went wrong!", "fail");
+    }
+};
+
+async function setupRecaptcha(phoneno){
+    try {
+        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-verifier', {});
+        await recaptchaVerifier.render();
+        const response = await signInWithPhoneNumber(auth, phoneno, recaptchaVerifier);
+        return response;
+    } catch (err){
+        console.log(typeof err.code, err.code);
+        showToast("Something went wrong!", "fail");
+    }
+}
+
+export const HandleSendOtp = async (
+    phoneno,
+    setConfirmObj,
+    setOtpFlag
+) => {
+    showToast("Please verify captcha", "info");
+    try {
+        const response = await setupRecaptcha(phoneno);
+
+        if (response){
+            setConfirmObj(response);
+            setOtpFlag(true);
+            showToast("Otp sent!", "success");
+        }
+
+    } catch (err){
+        console.log(typeof err.code, err.code);
+        showToast("Something went wrong!", "fail");
+    }
+}
+
+export const HandleSubmitOtp = async (
+    confirmObj,
+    otp,
+    router,
+    setIsLoggedIn,
+    setShowLogin
+) => {
+    showToast("Please wait", "info");
+    try {
+        const userCredentials = await confirmObj.confirm(otp);
+
+        const requestObject = {
+            phone: userCredentials.user.phoneNumber,
+            firebaseId: userCredentials.user.uid,
+            cartId: localStorage.getItem("cartId")
+        };
+        const response = await axios.post(USER_URL.phonelogin, requestObject);
         if (response.status === 200 || response.status === 201){
             localStorage.setItem("userId", userCredentials.user.uid);
             setIsLoggedIn(true);
