@@ -138,9 +138,7 @@ export default function Login() {
                                                         onChange={setphoneno}
                                                         placeholder="Enter you Phone number"
                                                     />
-                                                    <div id="recaptcha-verifier">
-                                                        _
-                                                    </div>
+                                                    <div id="recaptcha-verifier"></div>
                                                 </div>
                                                 <div className="relative mt-4">
                                                     <button
