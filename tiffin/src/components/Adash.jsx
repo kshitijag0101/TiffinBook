@@ -120,7 +120,7 @@ export default function Adash() {
                     <AdminSidebar showUI={showUI} setShowUI={setShowUI} />
                 </div>
 
-                <div className="w-full mt-4 lg:w-[calc(100% - 280px)] md:pl-20">
+                <div className="w-full lg:w-full lg:pl-0 md:pl-20">
                     {showUI === "orderlist" && <OrderList />}
                     {showUI === "addproduct" && (
                         <AddProduct setUpdateProductUI={setUpdateProductUI} />
