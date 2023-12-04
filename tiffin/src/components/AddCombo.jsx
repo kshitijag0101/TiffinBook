@@ -5,6 +5,15 @@ export default function AddCombo({ mealCounts, setShowUI, setUpdateComboUI }) {
     const [comboName, setComboName] = useState("");
     const [comboDescription, setComboDescription] = useState("");
     const [comboPrices, setComboPrices] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleImageChange = (e) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            setSelectedImage(null);
+            return;
+        }
+        setSelectedImage(e.target.files[0]);
+    };
 
     const handleComboNameChange = (e) => {
         setComboName(e.target.value);
@@ -46,7 +55,8 @@ export default function AddCombo({ mealCounts, setShowUI, setUpdateComboUI }) {
                 comboName,
                 comboDescription,
                 mealCounts,
-                setUpdateComboUI
+                setUpdateComboUI,
+                selectedImage
             );
             HandleAddComboReset();
         } else {
@@ -148,7 +158,14 @@ export default function AddCombo({ mealCounts, setShowUI, setUpdateComboUI }) {
                         >
                             Upload Image
                         </label>
-                        <input type="file" id="image" />
+                        <input
+                            type="file"
+                            id="image"
+                            onChange={handleImageChange}
+                            accept="image/*"
+                            multiple={false}
+                            encType="multipart/form-data"
+                        />
                     </div>
                 </div>
 

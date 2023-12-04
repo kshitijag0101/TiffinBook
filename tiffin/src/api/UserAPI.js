@@ -520,13 +520,15 @@ export const HandleAddCombo = async (
     comboName,
     comboDescription,
     mealCounts,
-    setUpdateComboUI
+    setUpdateComboUI,
+    selectedImage
 ) => {
     try {
         const response = await axios.post(USER_URL.addcombo, {
             name: comboName,
             price: comboDescription,
             mealCounts: mealCounts,
+            comboImage: selectedImage,
         });
         showToast("Combo added succesfully!", "success");
         setUpdateComboUI(true);
