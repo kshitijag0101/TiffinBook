@@ -464,10 +464,13 @@ async function addCombo(req, res){
     try {
         const { name, description, mealCounts } = req.body;
 
+        const comboImage = req.file.path.replace("\\" ,"/");
+
         const combo = new Combo({
             name: name,
             description: description,
-            mealCounts: mealCounts
+            mealCounts: mealCounts,
+            comboImage: comboImage
         });
         await combo.save();
 

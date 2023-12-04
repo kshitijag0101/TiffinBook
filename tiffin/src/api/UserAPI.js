@@ -524,12 +524,16 @@ export const HandleAddCombo = async (
     selectedImage
 ) => {
     try {
-        const response = await axios.post(USER_URL.addcombo, {
-            name: comboName,
-            price: comboDescription,
-            mealCounts: mealCounts,
-            comboImage: selectedImage,
-        });
+        const formData = new FormData();
+        formData.append("comboImage", selectedImage);
+        formData.append("name", comboName);
+        formData.append("description", comboDescription);
+        for (let i=0; i<mealCounts.length; i++){
+            formData.append("mealCounts", mealCounts[i]);
+        }
+        
+        const response = await axios.post(USER_URL.addcombo, formData);
+
         showToast("Combo added succesfully!", "success");
         setUpdateComboUI(true);
         setTimeout(() => {

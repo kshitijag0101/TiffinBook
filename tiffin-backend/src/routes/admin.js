@@ -3,6 +3,7 @@ import * as admin from '../controllers/admin.js';
 import * as product from '../controllers/product.js';
 import * as meal from "../controllers/meal.js";
 import * as pincode from "../controllers/pincode.js";
+import upload from "../../config/imageUpload.js";
 
 const router = Router();
 
@@ -38,7 +39,7 @@ router.post("/meal-counts/add", meal.addMealCount);
 
 router.post("/meal-counts/remove", meal.removeMealCount);
 
-router.post("/combos/add", meal.addCombo);
+router.post("/combos/add", upload.single('comboImage'), meal.addCombo);
 
 router.post("/combos/remove", meal.removeCombo);
 

@@ -15,7 +15,8 @@ const comboSchema = new mongoose.Schema({
             },
             price: Number
         }
-    ]
+    ],
+    comboImage: String
 });
 
 const Combo = mongoose.model('Combo', comboSchema);
