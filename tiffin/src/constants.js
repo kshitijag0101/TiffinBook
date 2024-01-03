@@ -1,4 +1,4 @@
-export const API_DOMAIN = "https://tense-jade-snaps.cyclic.cloud/";
+export const API_DOMAIN = "https://tense-jade-snaps.cyclic.cloud";
 // export const API_DOMAIN = "http://localhost:5000";
 const BASE_USER_API = API_DOMAIN + "/user";
 const BASE_ADMIN_API = API_DOMAIN + "/admin";
